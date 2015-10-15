@@ -25,6 +25,22 @@ module.exports = function(grunt) {
         dest: 'www/css/style.css'
       }
     },
+    jade: {
+      compile: {
+        options: {
+          client: false,
+          pretty: true,
+          data: grunt.file.readJSON('jade-data.json')
+        },
+        files: [ {
+          cwd: 'jade',
+          src: '*.jade',
+          dest: 'www',
+          expand: true,
+          ext: '.html'
+        } ]
+      }
+    },
     copy: {
         assets: {
           files: [
@@ -38,6 +54,10 @@ module.exports = function(grunt) {
         css: {
           files: ['less/theme/*.less', 'less/custom-bootstrap/*.less'],
           tasks: ['less:compileTheme', 'less:compileCustomBootstrapCore']
+        },
+        html: {
+          files: ['jade/**/*.jade', 'jade-data.json'],
+          tasks: ['jade:compile']
         }
     },
     shell: {
@@ -50,7 +70,7 @@ module.exports = function(grunt) {
     },
     concurrent: {
       develop: {
-        tasks: ['shell:httpServer', 'watch:css', 'shell:livereload'],
+        tasks: ['shell:httpServer', 'watch:css', 'watch:html', 'shell:livereload'],
         options: {
           logConcurrentOutput: true
         }
@@ -58,6 +78,7 @@ module.exports = function(grunt) {
     }
   });
   grunt.loadNpmTasks('grunt-contrib-less');
+  grunt.loadNpmTasks('grunt-contrib-jade');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-shell');
@@ -65,7 +86,8 @@ module.exports = function(grunt) {
 
   grunt.registerTask('build', [
     'copy:assets',
-    'less:compileCustomBootstrapCore', 'less:compileTheme'
+    'less:compileCustomBootstrapCore', 'less:compileTheme',
+    'jade:compile'
   ]);
   grunt.registerTask('develop', ['build', 'concurrent:develop']);
 };
