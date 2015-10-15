@@ -52,7 +52,7 @@ module.exports = function(grunt) {
     },
     watch: {
         css: {
-          files: ['less/theme/*.less', 'less/custom-bootstrap/*.less'],
+          files: ['less/*.less'],
           tasks: ['less:compileTheme', 'less:compileCustomBootstrapCore']
         },
         html: {
